@@ -59,14 +59,48 @@ var mesh = new THREE.Mesh( geometry, material );
 mesh.rotation.y = Math.PI/2;
 // オブジェクトをシーンに追加
 scene.add( mesh );
+	    
+	    
+// 球体の作成
+var target_geometry = new THREE.SphereGeometry(0.25,16,16);
+// マテリアルの作成
+var target_material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
+	    
+// オブジェクトの作成
+var target_mesh = new THREE.Mesh( target_geometry,target_material);
+// オブジェクトをｙ軸に沿って回転
+target_mesh.position.x = 5.0;
+// オブジェクトをシーンに追加
+scene.add(target_mesh);
+	    
+var targets=[target_mesh];
 
 function render(){
 	requestAnimationFrame( render );
 
 	// レンダリング
-	renderer.render(scene,camera);
+	//renderer.render(scene,camera);
+	
+	//ステレオ
+	effect.render(scene,camera);
+
 
 	controls.update();
+	
+	// ポイントが乗っているオブジェクトを取得
+	
+	raycaster.setFromCamera(cursor,camera);
+	var intersects = raycaster.intersectObjects(targets);
+	if (intersects.length > 0) {
+		if(scoprObj ! = intersects[ 0 ].object) {
+			if (scopedObj)scopedObj.scake.set(1,1,1);
+			scopedOdj = intersects[ 0 ].object;
+			scopedObj.scale.set(2,2,2);
+		}
+	} else {
+		if(scopedObj)scopedObj.scale.set(1,1,1);
+		scopedObj = null;
+	}
 }
 render();
 
